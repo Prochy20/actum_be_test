@@ -1,80 +1,217 @@
 FORMAT: 1A
-HOST: https://polls.apiblueprint.org/
+HOST: http://localhost:8020/
 
-# ACTUM_BE_TEST
+# ACTUM DIGITAL Be Test
 
-Polls is a simple API allowing consumers to view polls and vote in them.
+This APi is meant to be used as BE Dev test.
 
-## Questions Collection [/questions]
+## Product collection [/product]
 
-### List All Questions [GET]
+This collection is designed to work with single product
+
+### Find a Product [GET/product/{objectID}]
+
++ Parameters
+    + objectID: `Asd1g5-TTzHU45-SSH6` (string, required) - Object ID of a record which should be deleted
 
 + Response 200 (application/json)
-
-        [
-            {
-                "question": "Favourite programming language?",
-                "published_at": "2015-08-05T08:40:51.620Z",
-                "choices": [
-                    {
-                        "choice": "Swift",
-                        "votes": 2048
-                    }, {
-                        "choice": "Python",
-                        "votes": 1024
-                    }, {
-                        "choice": "Objective-C",
-                        "votes": 512
-                    }, {
-                        "choice": "Ruby",
-                        "votes": 256
-                    }
-                ]
-            }
-        ]
-
-### Create a New Question [POST]
-
-You may create your own question using this action. It takes a JSON
-object containing a question and a collection of answers in the
-form of choices.
-
-+ Request (application/json)
-
-        {
-            "question": "Favourite programming language?",
-            "choices": [
-                "Swift",
-                "Python",
-                "Objective-C",
-                "Ruby"
-            ]
-        }
-
-+ Response 201 (application/json)
-
-    + Headers
-
-            Location: /questions/2
 
     + Body
 
             {
-                "question": "Favourite programming language?",
-                "published_at": "2015-08-05T08:40:51.620Z",
-                "choices": [
-                    {
-                        "choice": "Swift",
-                        "votes": 0
-                    }, {
-                        "choice": "Python",
-                        "votes": 0
-                    }, {
-                        "choice": "Objective-C",
-                        "votes": 0
-                    }, {
-                        "choice": "Ruby",
-                        "votes": 0
-                    }
-                ]
+                "objectID": "Asd1g5-TTzHU45-SSH6",
+                "name": "Sausage",
+                "description": "A sausage is a type of meat product usually made from ground meat, often pork, beef, or poultry, along with salt, spices and other flavourings. Other ingredients such as grains or breadcrumbs may be included as fillers or extenders.",
+                "type": "meal",
             }
+    
+    + Attributes
+        + objectID (string) - Unique id of a record
+        + name (string) - Name of a product
+        + description (string) - Description of a product
+        + type (enum[string]) Type of a product
+            + Members
+                + `meal`
+                + `cloth`
+                + `other stuff`
+
+
+### Index a Product [POST]
+
++ Request (application/json)
+
+    + Attributes
+        + objectID (string) - Unique id of a record
+        + name (string) - Name of a product
+        + description (string) - Description of a product
+        + type (enum[string]) Type of a product
+            + Members
+                + `meal`
+                + `cloth`
+                + `other stuff`
+
+    + Headers
+
+            Authorization: Bearer JWT
+
+    + Body
+
+            {
+                "objectID": "Asd1g5-TTzHU45-SSH6",
+                "name": "Sausage",
+                "description": "A sausage is a type of meat product usually made from ground meat, often pork, beef, or poultry, along with salt, spices and other flavourings. Other ingredients such as grains or breadcrumbs may be included as fillers or extenders.",
+                "type": "meal",
+            }
+
++ Response 201 (application/json)
+
+    + Body
+
+            {
+                "status": "OK",
+                "message": "success",
+                "code": "200",
+            }
+
+### Delete a Product [DELETE/product/{objectID}]
+
++ Parameters
+    + objectID: `Asd1g5-TTzHU45-SSH6` (string, required) - Object ID of a record which should be deleted
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: Bearer JWT
+  
+
++ Response 201 (application/json)
+
+    + Body
+
+            {
+                "status": "OK",
+                "message": "success",
+                "code": "200",
+            }
+
+## Products collection [/products]
+This collection is designed to commit "bulk" operations above products
+
+### Find products [GET/{?offset, ?limit}]
+
++ Parameters
+    + offset (number, optional) - How many records should be skipped
+        + Default: 0
+    + limit (number, optional) - How many records should be retrieved
+        + Default: 100
+
++ Request
+
+    + Body
+
+            {
+                "objectID": ["Asd1g5-TTzHU45-SSH6", "Asd1g5-TTzHU45-SSH6"],
+            }
+    
+    + Attributes
+        + objectID (array[string], optional) - List of unique ids of products (if empty, all products are shown)
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "objectID": "Asd1g5-TTzHU45-SSH6",
+                "name": "Sausage",
+                "description": "A sausage is a type of meat product usually made from ground meat, often pork, beef, or poultry, along with salt, spices and other flavourings. Other ingredients such as grains or breadcrumbs may be included as fillers or extenders.",
+                "type": "meal",
+            }
+    
+    + Attributes
+        + objectID (string) - Unique id of a record
+        + name (string) - Name of a product
+        + description (string) - Description of a product
+        + type (enum[string]) Type of a product
+            + Members
+                + `meal`
+                + `cloth`
+                + `other stuff`
+
+### Index products [POST]
+
++ Request (application/json)
+
+    + Attributes
+        + Items (array [IndexingItem])
+
+    + Headers
+
+            Authorization: Bearer JWT
+
+    + Body
+
+            [
+                {
+                    "objectID": "Asd1g5-TTzHU45-SSH6",
+                    "name": "Sausage",
+                    "description": "A sausage is a type of meat product usually made from ground meat, often pork, beef, or poultry, along with salt, spices and other flavourings. Other ingredients such as grains or breadcrumbs may be included as fillers or extenders.",
+                    "type": "meal",
+                },
+                {
+                    "objectID": "Asd1g5-TTzHU45-SSH6",
+                    "name": "Sausage",
+                    "description": "A sausage is a type of meat product usually made from ground meat, often pork, beef, or poultry, along with salt, spices and other flavourings. Other ingredients such as grains or breadcrumbs may be included as fillers or extenders.",
+                    "type": "meal",
+                },
+            ]
+
++ Response 201 (application/json)
+
+    + Body
+
+            {
+                "status": "OK",
+                "message": "success",
+                "code": "200",
+            }
+
+### Delete a Product [DELETE]
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: Bearer JWT
+
+    + Body
+
+            {
+                "objectIDs": ["Asd1g5-TTzHU45-SSH6", "Asd1g5-TTzHU45-SSH6"],
+            }
+    
+    + Attributes
+        + objectIDs (array [ObjectID])
+
++ Response 201 (application/json)
+
+    + Body
+
+            {
+                "status": "OK",
+                "message": "success",
+                "code": "200",
+            }
+
+# Data structures
+## IndexingItem
++ objectID (string) - Unique id of a record
++ name (string) - Name of a product
++ description (string) - Description of a product
++ type (enum[string]) Type of a product
+    + Members
+        + `meal`
+        + `cloth`
+        + `other stuff`
+
+## ObjectID (string) - Unique id of a record
